@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned;
 
 entity clkdiv is
 
-    generic (divider : integer := 5e7); -- Clock time period /2
+    generic (divider : integer := 5); -- Clock time period /2
     port (
         clock : in std_logic;  -- The input 100MHZ clock.
         reset : in std_logic;  -- Synchronous active high reset.
@@ -29,14 +29,17 @@ begin
                 stdclk <= '0';
                 clk_count <= 0 ;
                 else          
-                    clk_count <= clk_count + 1;
-                    if (clk_count = divider) then 
-                        temp <= not temp;
+                    if (clk_count = divider-1 and temp = '0') then 
+                        temp <= '1'; 
+                        clk_count <= 0 ;
+                    elsif (temp = '1') then 
+                        temp <= '0';
+                    else
+                        clk_count <= clk_count + 1;    
                     end if;   
-            end if;
-        end if;    
-    stdclk <= temp;
-    clk_count <= 0 ;
+                    stdclk <= temp;
+            end if;    
+        end if;
     end process;
     
 end architecture;

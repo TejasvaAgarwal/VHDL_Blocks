@@ -2,8 +2,8 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-use std.textio.all;
-use std.env.finish;
+--use std.textio.all;
+--use std.env.finish;
 
 entity clkdiv_tb is
 end clkdiv_tb;
@@ -26,7 +26,7 @@ begin
         stdclk => stdclk
     );
     
-        reset <= '1', '0' after 20ns;
+        reset <= '1', '0' after 20 ns;
         --clk_count <= 0;
         --temp <= '0';
 
