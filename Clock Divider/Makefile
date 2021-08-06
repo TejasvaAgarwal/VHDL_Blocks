@@ -20,8 +20,8 @@ view: clkdiv_tb_view
 
 clkdiv_tb.ghw: analyze.ready
 	$(GHDLE) clkdiv_tb
-#	$(GHDLR) clkdiv_tb --stop-time=1us --wave=clkdiv_tb.ghw
-	$(GHDLR) clkdiv_tb --wave=clkdiv_tb.ghw
+# NOTE:  stop time after 1us
+	$(GHDLR) clkdiv_tb --stop-time=1us --wave=clkdiv_tb.ghw
 
 clkdiv_tb_view: clkdiv_tb.ghw clkdiv_tb.tcl
 	$(GTKWAVE) clkdiv_tb.ghw -S clkdiv_tb.tcl
