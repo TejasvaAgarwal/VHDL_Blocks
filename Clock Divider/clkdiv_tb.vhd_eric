@@ -1,0 +1,51 @@
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+use std.textio.all;
+-- use std.env.finish;
+
+entity clkdiv_tb is
+end clkdiv_tb;
+
+architecture sim of clkdiv_tb is
+
+  signal clock          : std_logic := '0';
+  signal reset          : std_logic;
+  --signal temp : std_logic;
+  signal stdclk         : std_logic;
+  --signal clk_count : integer;
+  signal stop_the_clock : boolean   := false;
+
+begin
+
+  stop_the_clock <= false, true after 500 ns;
+
+  DUT : entity work.clkdiv
+    generic map (
+      divider => 5
+      )
+    port map (
+      clock  => clock,
+      reset  => reset,
+      stdclk => stdclk
+      );
+
+  reset <= '1', '0' after 20 ns;
+  --clk_count <= 0;
+  --temp <= '0';
+
+  process
+  begin
+
+    while not stop_the_clock loop
+      clock <= '0';                     -- clock cycle is 10 ns
+      wait for 5 ns;
+      clock <= '1';
+      wait for 5 ns;
+    end loop;
+    wait;
+  end process;
+
+
+end architecture;
