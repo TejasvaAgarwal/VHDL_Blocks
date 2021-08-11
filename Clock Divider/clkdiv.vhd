@@ -1,7 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.std_logic_unsigned;
+--use ieee.std_logic_unsigned;
 
 entity clkdiv is
 
@@ -20,7 +20,7 @@ architecture rtl of clkdiv is
 
 begin
     
-    process (clock, reset)
+    process (clock)
     begin
     
         if (rising_edge(clock)) then -- Everything is Synchronous.
