@@ -15,6 +15,10 @@
 -- sclk 	: Serial clock out.
 -- sdata 	: Serial data output.
 
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
 entity serialize is 
 	
     generic (CLKDIV : integer := 5);                    -- Clock Division Factor.
@@ -36,3 +40,4 @@ architecture PISO of serialize is
 
 
   
+end architecture;
