@@ -4,6 +4,7 @@
 
 library IEEE;
 use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
 
 entity Shift_Register is
 
@@ -20,8 +21,34 @@ end Shift_Register;
 
 architecture Shifting of Shift_Register is
 
-
+  signal count_int : integer range 0 to 31;
+  signal cycle     : integer range 0 to 31;
+  
+  
 begin
 
   process(sclk)
-    
+  begin
+
+    count_int <= to_integer(unsigned(count));
+
+    if (falling_edge(sclk))then
+      if (dir = '0')then
+        if (start = '1')then
+          cycle <= 0;
+        elsif (cycle < count_int)then
+          cycle <= cycle + 1;
+        end if;
+      elsif (dir = '1')then
+        if (start = '1')then
+          cycle <= count_int;
+        elsif (cycle > 0)then
+          cycle <= cycle - 1;
+        end if;
+      end if;
+      sdata <= data(cycle);
+    end if;
+
+  end process;
+
+end architecture;
