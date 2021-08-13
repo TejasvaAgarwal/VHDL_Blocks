@@ -29,33 +29,39 @@ architecture Shifting of Shift_Register is
 
 begin
 
-  process(clock)
-  begin
+  process (clock, reset) is
+  begin  -- process
+    if reset = '1' then  -- always provide a reset for every signal
+      count_int       <= 0;
+      cycle           <= 0;
+      registered_data <= (others => '0');
 
-    if (falling_edge(clock))then
-      if (dir = '0')then
-        count_int <= to_integer(unsigned(count));
-        if (start = '1')then
-          registered_data <= data;
-          cycle           <= 0;
-        elsif (cycle < count_int)then
-          cycle <= cycle + 1;
+    elsif (rising_edge(clock)) then     -- rising clock edge
+
+      -- latch the output
+      sdata <= data(cycle);
+
+      -- initialization
+      if start = '1' then
+        count_int       <= to_integer(unsigned(count));  -- store the bit count
+        registered_data <= data;                         -- store the data
+        if dir = '0' then
+          cycle <= 0;                                    -- count up if dir=0
+        else
+          cycle <= count_int;                            -- count down if dir=1
         end if;
-      elsif (dir = '1')then
-        count_int <= to_integer(unsigned(count));
-        if (start = '1')then
-          registered_data <= data;
-          cycle           <= count_int;
-        elsif (cycle > 0)then
-          cycle <= cycle - 1;
+      end if;
+
+      -- shifting
+      if rising_edge(s_en) and start = '0' then
+        if dir = '0' and (cycle < count_int) then
+          cycle <= cycle + 1;           -- incrementing from 0 to count_int.
+        end if;
+        if dir = '1' and (cycle > 0) then
+          cycle <= cycle -1;            -- decrementing from count_int to 0.
         end if;
       end if;
     end if;
-
-    if (falling_edge(s_en))then
-      sdata <= data(cycle);
-    end if;
-
   end process;
 
 end architecture;

@@ -9,14 +9,14 @@ use IEEE.numeric_std.all;
 entity Shift_Register is
 
   port (
-    clock : in  std_logic;              -- System clock.
-    reset : in  std_logic;              -- Synchronous active high reset.  
-    s_en  : in  std_logic;              -- Serial clock.
-    start : in  std_logic;              -- Enables shifting.
-    dir   : in  std_logic;              -- Specifies direction.
+    clock : in  std_logic;                      -- System clock.
+    reset : in  std_logic;                      -- Synchronous active high reset.  
+    s_en  : in  std_logic;                      -- Serial clock.
+    start : in  std_logic;                      -- Enables shifting.
+    dir   : in  std_logic;                      -- Specifies direction.
     count : in  std_logic_vector(4 downto 0);   -- Specifies no. of bits.
     data  : in  std_logic_vector(31 downto 0);  -- Parallel data.
-    sdata : out std_logic);             -- Serial data.
+    sdata : out std_logic);                     -- Serial data.
 
 end Shift_Register;
 
