@@ -11,7 +11,7 @@
 -- dir		: Direction. if 0, data[0] is sent first.
 -- 			     if 1, data[count-1] is sent first.
 -- start	: 1 clk wide pulse to enable/ start serialization.
--- busy`	: Output indicating that the serialization is going on.
+-- busy        	: Output indicating that the serialization is going on.
 -- sclk 	: Serial clock out.
 -- sdata 	: Serial data output.
 
@@ -21,17 +21,18 @@ use IEEE.numeric_std.all;
 
 entity serialize is 
 	
-    generic (Divider : integer := 5);                    -- Clock Division Factor.
-    
+    generic (Divider : integer := 5);                   -- Clock Division Factor.
+    ls -l
+      
     port (
-        clock	: in std_logic;                         -- System clock.
-        reset 	: in std_logic;                         -- Active high reset.
+        clk	: in std_logic;                         -- System clock.
+        rst 	: in std_logic;                         -- Active high reset.
         data 	: in std_logic_vector(31 downto 0);     -- Parallel data.
         count   : in std_logic_vector(4 downto 0);      -- Bit count 1-32.
         dir     : in std_logic;                         -- Shift direction.
         start   : in std_logic;                         -- Start serialization.
         busy    : out std_logic;                        -- High when busy.
-        s_en    : inout std_logic;                        -- Serial clock out.
+        sclk    : inout std_logic;                      -- Serial clock out.
         sdata   : out std_logic);                       -- Serial data out.
 
 end entity serialize;
@@ -42,7 +43,7 @@ architecture PISO of serialize is
     port (
       clock         : in std_logic;
       reset       : in std_logic;
-      s_enable      : out std_logic);
+      stdclk      : out std_logic);
   end component;
   
   component Shift_Register
@@ -56,8 +57,8 @@ architecture PISO of serialize is
   end component;
   
 begin
-  ClockDivision  : clkdiv port map(clock => clock, reset => reset, s_enable => s_en); 
-  Shifting       : Shift_Register port map (clock => clock, reset => reset, s_en => s_en, start => start, dir => dir, count => count, data => data, sdata => sdata);
+  ClockDivision  : clkdiv port map(clock => clk, reset => rst, stdclk => sclk); 
+  Shifting       : Shift_Register port map (sclk => sclk, start => start, dir => dir, count => count, data => data, sdata => sdata);
 
   
 end architecture;
