@@ -33,6 +33,7 @@ begin
         s_enable_180 <= '0';
         clk_count    <= 0;
       else
+        -- Serial Enable.
         if (clk_count = divider-1 and temp = '0') then  -- Enable high condition.
           temp      <= '1';
           clk_count <= 0;
@@ -42,8 +43,16 @@ begin
           clk_count <= clk_count + 1;
         end if;
         s_enable <= temp;
+        -- Phase Shifted Serial Enable.
+        if (clk_count = divider/2 and temp_180 = '0') then  -- Enable high condition.
+          temp_180 <= '1';
+        elsif (temp_180 = '1') then     -- Enable low condition.
+          temp_180 <= '0';
+        end if;
+        s_enable_180 <= temp_180;
       end if;
     end if;
+
   end process;
 
 end architecture;
