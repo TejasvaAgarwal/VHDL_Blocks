@@ -9,6 +9,7 @@ architecture sim of clkdiv_tb is
 
   signal clock        : std_logic;
   signal reset        : std_logic;
+  signal divider      : std_logic_vector(7 downto 0);
   signal s_enable     : std_logic;
   signal s_enable_180 : std_logic;
 
@@ -17,11 +18,13 @@ begin
     port map(
       clock        => clock,
       reset        => reset,
+      divider      => divider,
       s_enable     => s_enable,
       s_enable_180 => s_enable_180
     );
 
-  reset <= '1', '0' after 20 ns;
+  divider <= "00001010";
+  reset   <= '1', '0' after 20 ns;
 
   process
   begin
