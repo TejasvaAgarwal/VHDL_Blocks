@@ -14,8 +14,7 @@ entity clkdiv is
     reset        : in std_logic; -- Synchronous active high reset.
     divider      : in std_logic_vector(7 downto 0); -- The frequency in terms of clock at which the enable signals will trigger.
     s_enable     : out std_logic; -- Enable signal with 1 HZ frequency.
-    s_enable_180 : out std_logic -- Phase shifted 180 degrees with s_enable.
-  );
+    s_enable_180 : out std_logic); -- Phase shifted 180 degrees with s_enable.
 end clkdiv;
 
 architecture rtl of clkdiv is

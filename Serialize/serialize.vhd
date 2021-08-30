@@ -20,20 +20,18 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
 entity serialize is
-
-  --generic (Divider : integer := 5); -- Clock Division Factor.
-
   port (
-    clock   : in std_logic; -- System clock.
-    reset   : in std_logic; -- Active high reset.
-    divider : in std_logic_vector(7 downto 0);-- Clock Division Factor.
-    data    : in std_logic_vector(31 downto 0); -- Parallel data.
-    count   : in std_logic_vector(4 downto 0); -- Bit count 1-32.
-    dir     : in std_logic; -- Shift direction.
-    start   : in std_logic; -- Start serialization.
-    busy    : out std_logic; -- High when busy.
-    s_en    : inout std_logic; -- Serial clock out.
-    sdata   : out std_logic); -- Serial data out.
+    clock    : in std_logic; -- System clock.
+    reset    : in std_logic; -- Active high reset.
+    divider  : in std_logic_vector(7 downto 0);-- Clock Division Factor.
+    data     : in std_logic_vector(31 downto 0); -- Parallel data.
+    count    : in std_logic_vector(4 downto 0); -- Bit count 1-32.
+    dir      : in std_logic; -- Shift direction.
+    start    : in std_logic; -- Start serialization.
+    busy     : out std_logic; -- High when busy.
+    s_en     : inout std_logic; -- Serial clock out.
+    s_en_180 : inout std_logic; -- Serial clock out, phase shifted 180 degrees.
+    sdata    : out std_logic); -- Serial data out.
 
 end entity serialize;
 
@@ -41,24 +39,26 @@ architecture PISO of serialize is
 
   component clkdiv
     port (
-      clock        : in std_logic;
-      reset        : in std_logic;
-      divider      : in std_logic_vector(7 downto 0);
-      s_enable     : out std_logic;
-      s_enable_180 : out std_logic);
+      clock        : in std_logic; -- The input 100MHZ clock.
+      reset        : in std_logic; -- Synchronous active high reset.
+      divider      : in std_logic_vector(7 downto 0); -- The frequency in terms of clock at which the enable signals will trigger.
+      s_enable     : out std_logic; -- Enable signal with 1 HZ frequency.
+      s_enable_180 : out std_logic); -- Phase shifted 180 degrees with s_enable.
   end component;
 
   component Shift_Register
     port (
-      sclk  : in std_logic;
-      start : in std_logic;
-      dir   : in std_logic;
-      count : in std_logic_vector(4 downto 0);
-      data  : in std_logic_vector(31 downto 0);
-      sdata : out std_logic);
+      clock : in std_logic; -- System clock.
+      reset : in std_logic; -- Synchronous active high reset.  
+      s_en  : in std_logic; -- Serial clock.
+      start : in std_logic; -- Enables shifting.
+      dir   : in std_logic; -- Specifies direction.
+      count : in std_logic_vector(4 downto 0); -- Specifies no. of bits.
+      data  : in std_logic_vector(31 downto 0); -- Parallel data.
+      sdata : out std_logic); -- Serial data.
   end component;
 
 begin
-  ClockDivision : clkdiv port map(clock => clock, reset => reset, divider => divider, s_enable => s_en);
+  ClockDivision : clkdiv port map(clock => clock, reset => reset, divider => divider, s_enable => s_en, s_enable_180 => s_en_180);
   Shifting      : Shift_Register port map(clock => clock, reset => reset, s_en => s_en, start => start, dir => dir, count => count, data => data, sdata => sdata);
 end architecture;
