@@ -49,7 +49,8 @@ architecture PISO of serialize is
   component Shift_Register
     port (
       clock : in std_logic; -- System clock.
-      reset : in std_logic; -- Synchronous active high reset.  
+      reset : in std_logic; -- Synchronous active high reset. 
+      busy  : out std_logic; -- Signal to indicate shifting. 
       s_en  : in std_logic; -- Serial clock.
       start : in std_logic; -- Enables shifting.
       dir   : in std_logic; -- Specifies direction.
@@ -60,5 +61,5 @@ architecture PISO of serialize is
 
 begin
   ClockDivision : clkdiv port map(clock => clock, reset => reset, divider => divider, s_enable => s_en, s_enable_180 => s_en_180);
-  Shifting      : Shift_Register port map(clock => clock, reset => reset, s_en => s_en, start => start, dir => dir, count => count, data => data, sdata => sdata);
+  Shifting      : Shift_Register port map(clock => clock, reset => reset, busy => busy, s_en => s_en, start => start, dir => dir, count => count, data => data, sdata => sdata);
 end architecture;

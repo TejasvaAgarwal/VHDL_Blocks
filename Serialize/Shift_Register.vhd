@@ -10,7 +10,8 @@ entity Shift_Register is
 
   port (
     clock : in std_logic; -- System clock.
-    reset : in std_logic; -- Synchronous active high reset.  
+    reset : in std_logic; -- Synchronous active high reset.
+    busy  : out std_logic; -- Signal to indicate shifting.  
     s_en  : in std_logic; -- Serial clock.
     start : in std_logic; -- Enables shifting.
     dir   : in std_logic; -- Specifies direction.
@@ -29,10 +30,11 @@ begin
 
   process (clock, reset) is
   begin -- process
-    if reset = '1' then -- always provide a reset for every signal
+    if (reset = '1') then -- always provide a reset for every signal
       count_int       <= 0;
       cycle           <= 0;
       registered_data <= (others => '0');
+      busy            <= '0';
 
     elsif (rising_edge(clock)) then -- rising clock edge
 
@@ -40,23 +42,28 @@ begin
       sdata <= data(cycle);
 
       -- initialization
-      if start = '1' then
+      if (start = '1') then
         count_int       <= to_integer(unsigned(count)); -- store the bit count
         registered_data <= data; -- store the data
-        if dir = '0' then
-          cycle <= 0; -- count up if dir=0
+        if (dir = '0') then
+          cycle <= 0; -- count up if dir = 0
         else
-          cycle <= count_int; -- count down if dir=1
+          cycle <= count_int; -- count down if dir = 1
         end if;
       end if;
 
       -- shifting
-      if rising_edge(s_en) and start = '0' then
-        if dir = '0' and (cycle < count_int) then
+      if (rising_edge(s_en) and start = '0') then
+        busy <= '1';
+        if (dir = '0' and (cycle < count_int)) then
           cycle <= cycle + 1; -- incrementing from 0 to count_int.
+        elsif (dir = '0' and (cycle = count_int)) then
+          busy <= '0';
         end if;
-        if dir = '1' and (cycle > 0) then
+        if (dir = '1' and (cycle > 0)) then
           cycle <= cycle - 1; -- decrementing from count_int to 0.
+        elsif (dir = '1' and (cycle = 0)) then
+          busy <= '0';
         end if;
       end if;
     end if;

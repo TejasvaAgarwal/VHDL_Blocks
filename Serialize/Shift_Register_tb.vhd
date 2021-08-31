@@ -10,6 +10,7 @@ architecture Behavioral of Shift_Register_tb is
 
   signal clock : std_logic;
   signal reset : std_logic;
+  signal busy  : std_logic;
   signal s_en  : std_logic;
   signal start : std_logic;
   signal count : std_logic_vector (4 downto 0);
@@ -23,6 +24,7 @@ begin
     port map (
       clock => clock,
       reset => reset,
+      busy  => busy,
       s_en  => s_en,
       start => start,
       dir   => dir,
@@ -34,7 +36,7 @@ begin
   -- Initialization.
   
   start <= '1', '0' after 40 ns;
-  count <= "01010";
+  count <= "11111";
   data  <= "10101010101010101010101010101010";
   --data <= "11111111111111111111111111111111";
   --data  <= "00000000000000000000000000000000";
