@@ -11,7 +11,7 @@
 -- dir		: Direction. if 0, data[0] is sent first.
 -- 			     if 1, data[count-1] is sent first.
 -- start	: 1 clk wide pulse to enable/ start serialization.
--- busy`	: Output indicating that the serialization is going on.
+-- busy 	: Output indicating that the serialization is going on.
 -- sclk 	: Serial clock out.
 -- sdata 	: Serial data output.
 
