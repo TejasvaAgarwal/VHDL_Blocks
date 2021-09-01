@@ -39,7 +39,9 @@ begin
     elsif (rising_edge(clock)) then -- rising clock edge
 
       -- latch the output
-      sdata <= data(cycle);
+      if (s_en = '1') then
+        sdata <= data(cycle);
+      end if;
 
       -- initialization
       if (start = '1') then
@@ -53,7 +55,7 @@ begin
       end if;
 
       -- shifting
-      if (rising_edge(s_en) and start = '0') then
+      if (s_en = '1' and start = '0') then
         busy <= '1';
         if (dir = '0' and (cycle < count_int)) then
           cycle <= cycle + 1; -- incrementing from 0 to count_int.

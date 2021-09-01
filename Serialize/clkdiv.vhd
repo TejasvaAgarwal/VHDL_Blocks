@@ -19,7 +19,7 @@ end clkdiv;
 
 architecture rtl of clkdiv is
   signal int_divider : integer range 0 to 255; -- To store the value of the divider in an integer form.
-  signal clk_count   : integer range 0 to int_divider; -- Clock Count to count till the input clock reaches the divider.
+  signal clk_count   : integer range 0 to 255; -- Clock Count to count till the input clock reaches the divider.
   signal temp        : std_logic; -- Temporary variable to store the serial enable value.
   signal temp_180    : std_logic; -- Temporary variable to store the phase shifted.
 
