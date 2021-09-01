@@ -35,7 +35,7 @@ begin
 
   -- Initialization.
   
-  start <= '1', '0' after 40 ns;
+  start <= '0', '1' after 40 ns, '0' after 50 ns;
   count <= "11111";
   data  <= "10101010101010101010101010101010";
   --data <= "11111111111111111111111111111111";

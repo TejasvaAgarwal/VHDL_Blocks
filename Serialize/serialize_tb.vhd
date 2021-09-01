@@ -34,9 +34,10 @@ begin
       busy    => busy,
       sdata   => sdata,
       sclk    => sclk);
+      
   -- Initialisation
 
-  start   <= '1', '0' after 40 ns;
+  start <= '0', '1' after 40 ns, '0' after 50 ns;
   count   <= "00101";
   data    <= "10101010101010101010101010101010";
   divider <= "00001010";

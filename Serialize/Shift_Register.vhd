@@ -32,7 +32,6 @@ begin
   begin -- process
     if (reset = '1') then -- always provide a reset for every signal
       count_int       <= 0;
-      cycle           <= 0;
       registered_data <= (others => '0');
       busy            <= '0';
 
