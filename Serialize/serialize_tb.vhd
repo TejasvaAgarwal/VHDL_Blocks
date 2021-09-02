@@ -41,7 +41,7 @@ begin
   count   <= "00101";
   data    <= "10101010101010101010101010101010";
   divider <= "00001010";
-  dir     <= '1';
+  dir     <= '0';
   reset   <= '1', '0' after 20ns;
 
   process

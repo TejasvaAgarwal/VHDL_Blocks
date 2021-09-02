@@ -31,7 +31,7 @@ begin
   process (clock, reset) is
   begin -- process
     if (reset = '1') then -- always provide a reset for every signal
-      count_int       <= 0;
+      count_int       <= to_integer(unsigned(count));
       registered_data <= (others => '0');
       busy            <= '0';
 
