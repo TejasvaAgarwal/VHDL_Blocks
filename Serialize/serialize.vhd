@@ -30,8 +30,6 @@ entity serialize is
     dir     : in std_logic; -- Shift direction.
     start   : in std_logic; -- Start serialization.
     busy    : out std_logic; -- High when busy.
-    -- s_en     : inout std_logic; -- Serial clock out.
-    -- s_en_180 : inout std_logic; -- Serial clock out, phase shifted 180 degrees.
     sclk  : out std_logic; -- Output clock to CITIROC.
     sdata : out std_logic); -- Serial data out.
 

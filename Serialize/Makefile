@@ -12,19 +12,19 @@ GHDLE = $(GHDLRUN) -e $(GHDLOPT)
 GHDLR = $(GHDLRUN) -r $(GHDLOPT)
 
 # list all VHDL source files here
-VHDL =	clkdiv.vhd clkdiv_tb.vhd
+VHDL =	serialize.vhd serialize_tb.vhd
 
-all: clkdiv_tb.ghw
+all: serialize_tb.ghw
 
-view: clkdiv_tb_view
+view: serialize_tb_view
 
-clkdiv_tb.ghw: analyze.ready
-	$(GHDLE) clkdiv_tb
+serialize_tb.ghw: analyze.ready
+	$(GHDLE) serialize_tb
 # NOTE:  stop time after 1us
-	$(GHDLR) clkdiv_tb --stop-time=1us --wave=clkdiv_tb.ghw
+	$(GHDLR) serialize_tb --stop-time=1us --wave=serialize_tb.ghw
 
-clkdiv_tb_view: clkdiv_tb.ghw clkdiv_tb.tcl
-	$(GTKWAVE) clkdiv_tb.ghw -S clkdiv_tb.tcl
+serialize_tb_view: serialize_tb.ghw serialize_tb.tcl
+	$(GTKWAVE) serialize_tb.ghw -S serialize_tb.tcl
 
 #---- don't touch ----
 define analyze_VHDL

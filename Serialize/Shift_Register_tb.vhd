@@ -43,7 +43,7 @@ begin
   --data  <= "01010001110101000111010100011101";
   dir   <= '1';
 
-  reset <= '0', '1' after 10ns, '0' after 20ns; 
+  reset <= '0', '1' after 10 ns, '0' after 20 ns; 
   process
   begin
 
