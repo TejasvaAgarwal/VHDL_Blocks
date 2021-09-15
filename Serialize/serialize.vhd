@@ -30,8 +30,8 @@ entity serialize is
     dir     : in std_logic; -- Shift direction.
     start   : in std_logic; -- Start serialization.
     busy    : out std_logic; -- High when busy.
-    sclk  : out std_logic; -- Output clock to CITIROC.
-    sdata : out std_logic); -- Serial data out.
+    sclk    : out std_logic; -- Output clock to CITIROC.
+    sdata   : out std_logic); -- Serial data out.
 
 end entity serialize;
 
@@ -43,7 +43,8 @@ architecture PISO of serialize is
       reset        : in std_logic; -- Synchronous active high reset.
       divider      : in std_logic_vector(7 downto 0); -- Dividing Factor.
       s_enable     : out std_logic; -- Enable signal with 1 HZ frequency.
-      s_enable_180 : out std_logic); -- Phase shifted 180 degrees with s_enable.
+      s_enable_180 : out std_logic; -- Phase shifted 180 degrees with s_enable.
+      sclk         : out std_logic); -- Standard clock, wavelength = divider.
   end component;
 
   component Shift_Register
@@ -69,7 +70,8 @@ begin
     reset        => reset,
     divider      => divider,
     s_enable     => stored_s_en,
-    s_enable_180 => stored_s_en_180);
+    s_enable_180 => stored_s_en_180,
+    sclk         => sclk);
   -- Instantiating the Shift Register.
   Shifting : Shift_Register port map(
     clock => clock,
@@ -81,15 +83,5 @@ begin
     count => count,
     data  => data,
     sdata => sdata);
-  -- Processing the sclk output signal.
-  process (clock, reset) is
-  begin
-    if (reset = '1') then
-      sclk <= '0';
-    elsif (rising_edge(clock) and stored_s_en_180 = '1') then
-      sclk <= '1';
-    elsif (rising_edge(clock) and stored_s_en = '1') then
-      sclk <= '0';
-    end if;
-  end process;
+
 end architecture;

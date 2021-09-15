@@ -22,9 +22,10 @@ entity Shift_Register is
 end Shift_Register;
 architecture Shifting of Shift_Register is
 
-  signal count_int       : integer range 0 to 31; -- Integer value of count vector.
-  signal cycle           : integer range 0 to 31; -- Ascending or descending.                  
-  signal registered_data : std_logic_vector(31 downto 0); -- Temporary vector.
+  signal count_int       : integer range 1 to 32; -- Integer value of count vector.
+  signal cycle           : integer range 1 to 32; -- Ascending or descending.                  
+  signal registered_data : std_logic_vector(31 downto 0); -- Temporary data vector.
+  signal registered_dir  : std_logic; -- To store the direction.
 
 begin
 
@@ -34,20 +35,25 @@ begin
       count_int       <= to_integer(unsigned(count));
       registered_data <= (others => '0');
       busy            <= '0';
+      registered_dir  <= dir; -- only changes at reset or dir
 
     elsif (rising_edge(clock)) then -- rising clock edge
-
       -- latch the output
       if (s_en = '1') then
-        sdata <= data(cycle);
+        sdata <= data(cycle - 1);
       end if;
 
       -- initialization
       if (start = '1') then
-        count_int       <= to_integer(unsigned(count)); -- store the bit count
+        registered_dir <= dir;
+        if (count = "00000") then
+          count_int <= 32; -- Anomaly Case (count_in can't be 0 (logic error))
+        else
+          count_int <= to_integer(unsigned(count)); -- store the bit count
+        end if;
         registered_data <= data; -- store the data
-        if (dir = '0') then
-          cycle <= 0; -- count up if dir = 0
+        if (registered_dir = '0') then
+          cycle <= 1; -- count up if dir = 0
         else
           cycle <= count_int; -- count down if dir = 1
         end if;
@@ -56,14 +62,14 @@ begin
       -- shifting
       if (s_en = '1' and start = '0') then
         busy <= '1';
-        if (dir = '0' and (cycle < count_int)) then
+        if (registered_dir = '0' and (cycle < count_int)) then
           cycle <= cycle + 1; -- incrementing from 0 to count_int.
-        elsif (dir = '0' and (cycle = count_int)) then
+        elsif (registered_dir = '0' and (cycle = count_int)) then
           busy <= '0';
         end if;
-        if (dir = '1' and (cycle > 0)) then
+        if (registered_dir = '1' and (cycle > 1)) then
           cycle <= cycle - 1; -- decrementing from count_int to 0.
-        elsif (dir = '1' and (cycle = 0)) then
+        elsif (registered_dir = '1' and (cycle = 1)) then
           busy <= '0';
         end if;
       end if;

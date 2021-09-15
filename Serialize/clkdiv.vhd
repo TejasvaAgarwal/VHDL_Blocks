@@ -14,7 +14,8 @@ entity clkdiv is
     reset        : in std_logic; -- Synchronous active high reset.
     divider      : in std_logic_vector(7 downto 0); -- The frequency in terms of clock at which the enable signals will trigger.
     s_enable     : out std_logic; -- Enable signal with 1 HZ frequency.
-    s_enable_180 : out std_logic); -- Phase shifted 180 degrees with s_enable.
+    s_enable_180 : out std_logic; -- Phase shifted 180 degrees with s_enable.
+    sclk         : out std_logic); -- Standard clock, wavelength = divider.
 end clkdiv;
 
 architecture rtl of clkdiv is
@@ -36,6 +37,7 @@ begin
         s_enable_180 <= '0';
         clk_count    <= 0;
         int_divider  <= to_integer(unsigned(divider));
+        sclk         <= '0';
       else
         -- Serial Enable.
         if (clk_count = int_divider - 2 and temp = '0') then -- Enable high condition.
@@ -43,17 +45,22 @@ begin
           clk_count <= 0;
         elsif (temp = '1') then -- Enable low condition.
           temp <= '0';
+          sclk <= '0';
         else
           clk_count <= clk_count + 1;
         end if;
+
         s_enable <= temp;
         -- Phase Shifted Serial Enable.
         if (clk_count = int_divider / 2 - 2 and temp_180 = '0') then -- Enable high condition.
           temp_180 <= '1';
         elsif (temp_180 = '1') then -- Enable low condition.
           temp_180 <= '0';
+          sclk     <= '1';
         end if;
+
         s_enable_180 <= temp_180;
+
       end if;
     end if;
 

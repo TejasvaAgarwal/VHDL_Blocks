@@ -12,6 +12,7 @@ architecture sim of clkdiv_tb is
   signal divider      : std_logic_vector(7 downto 0);
   signal s_enable     : std_logic;
   signal s_enable_180 : std_logic;
+  signal sclk         : std_logic;
 
 begin
   DUT : entity work.clkdiv
@@ -20,8 +21,8 @@ begin
       reset        => reset,
       divider      => divider,
       s_enable     => s_enable,
-      s_enable_180 => s_enable_180
-    );
+      s_enable_180 => s_enable_180,
+      sclk => sclk);
 
   divider <= "00001010";
   reset   <= '1', '0' after 20 ns;
