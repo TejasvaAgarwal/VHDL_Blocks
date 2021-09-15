@@ -32,7 +32,7 @@ begin
   process (clock, reset) is
   begin -- process
     if (reset = '1') then -- always provide a reset for every signal
-      count_int       <= to_integer(unsigned(count));
+      count_int       <= 1;
       registered_data <= (others => '0');
       busy            <= '0';
       registered_dir  <= dir; -- only changes at reset or dir
