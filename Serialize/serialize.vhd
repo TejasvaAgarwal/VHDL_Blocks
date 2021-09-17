@@ -43,8 +43,8 @@ architecture PISO of serialize is
       reset        : in std_logic; -- Synchronous active high reset.
       divider      : in std_logic_vector(7 downto 0); -- Dividing Factor.
       s_enable     : out std_logic; -- Enable signal with 1 HZ frequency.
-      s_enable_180 : out std_logic; -- Phase shifted 180 degrees with s_enable.
-      sclk         : out std_logic); -- Standard clock, wavelength = divider.
+      s_enable_180 : out std_logic); -- Phase shifted 180 degrees with s_enable.
+
   end component;
 
   component Shift_Register
@@ -70,8 +70,7 @@ begin
     reset        => reset,
     divider      => divider,
     s_enable     => stored_s_en,
-    s_enable_180 => stored_s_en_180,
-    sclk         => sclk);
+    s_enable_180 => stored_s_en_180);
   -- Instantiating the Shift Register.
   Shifting : Shift_Register port map(
     clock => clock,
@@ -83,5 +82,17 @@ begin
     count => count,
     data  => data,
     sdata => sdata);
+
+  -- Processing the Standard Clock.  
+  process (clock)
+  begin
+    if (reset = '1') then
+      sclk <= '0';
+    elsif (rising_edge(clock) and stored_s_en = '1') then
+      sclk <= '0';
+    elsif (rising_edge(clock) and stored_s_en_180 = '1') then
+      sclk <= '1';
+    end if;
+  end process;
 
 end architecture;
