@@ -37,12 +37,12 @@ begin
 
   -- Initialisation
 
-  start   <= '0', '1' after 40 ns, '0' after 50 ns;
+  start   <= '0', '1' after 40 ns, '0' after 50 ns, '1' after 300 ns, '0' after 310 ns;
   count   <= "00000";
   data    <= "10101010101010101010101010101010";
   divider <= "00001010";
   dir     <= '1';
-  reset   <= '1', '0' after 20 ns;
+  reset   <= '1', '0' after 20 ns,'1' after 500 ns, '0' after 510 ns;
   process
   begin
 

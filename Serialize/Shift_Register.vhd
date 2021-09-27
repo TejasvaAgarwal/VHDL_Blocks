@@ -1,6 +1,6 @@
 -- This is the Parallel In, Serial Out Shift Register which is meant to take in
 -- upto 32 bits as parallel input and shift them in a specified direction to a
--- serial output.
+-- serial output.  
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -20,6 +20,7 @@ entity Shift_Register is
     sdata : out std_logic); -- Serial data.
 
 end Shift_Register;
+
 architecture Shifting of Shift_Register is
 
   signal count_int       : integer range 1 to 32; -- Integer value of count vector.
@@ -32,7 +33,12 @@ begin
   process (clock, reset) is
   begin -- process
     if (reset = '1') then -- always provide a reset for every signal
-      count_int       <= 1;
+      if (count = "00000") then
+        count_int <= 32; -- Anomaly Case (count_in can't be 0 (logic error))
+      else
+        count_int <= to_integer(unsigned(count)); -- store the bit count
+      end if;
+      --count_int       <= 1;
       registered_data <= (others => '0');
       busy            <= '0';
       registered_dir  <= dir; -- only changes at reset or dir
