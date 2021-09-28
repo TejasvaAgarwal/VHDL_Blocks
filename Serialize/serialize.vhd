@@ -83,15 +83,29 @@ begin
     data  => data,
     sdata => sdata);
 
-  -- Processing the Standard Clock.  
-  process (clock)
-  begin
-    if (reset = '1') then
+-- -- --  -- Processing the Standard Clock.  
+-- -- --  process (clock)
+-- -- --  begin
+-- -- --    if (reset = '1') then
+-- -- --      sclk <= '0';
+-- -- --    elsif (rising_edge(clock) and stored_s_en = '1') then
+-- -- --      sclk <= '0';
+-- -- --    elsif (rising_edge(clock) and stored_s_en_180 = '1') then
+-- -- --      sclk <= '1';
+-- -- --    end if;
+-- -- --  end process;
+
+  process (clock, reset) is
+  begin  -- process
+    if reset = '1' then
       sclk <= '0';
-    elsif (rising_edge(clock) and stored_s_en = '1') then
-      sclk <= '0';
-    elsif (rising_edge(clock) and stored_s_en_180 = '1') then
-      sclk <= '1';
+      elsif rising_edge(clock) then  -- rising clock edge
+      if stored_s_en = '1' then
+        sclk <= '0';
+      end if;
+      if stored_s_en_180 = '1' then
+        sclk <= '1';
+      end if;
     end if;
   end process;
 
