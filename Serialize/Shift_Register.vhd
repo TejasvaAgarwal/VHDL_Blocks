@@ -38,10 +38,9 @@ begin
       else
         count_int <= to_integer(unsigned(count)); -- store the bit count
       end if;
-      --count_int       <= 1;
       registered_data <= (others => '0');
       busy            <= '0';
-      registered_dir  <= dir; -- only changes at reset or dir
+      registered_dir  <= dir; -- only changes at reset.
 
     elsif (rising_edge(clock)) then -- rising clock edge
       -- latch the output
@@ -51,7 +50,6 @@ begin
 
       -- initialization
       if (start = '1') then
-        registered_dir <= dir;
         if (count = "00000") then
           count_int <= 32; -- Anomaly Case (count_in can't be 0 (logic error))
         else
