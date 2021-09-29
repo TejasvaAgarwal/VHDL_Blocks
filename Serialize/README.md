@@ -21,3 +21,9 @@ output serial clock (`sclk`) and serial data (`sdata`).
     
     end entity serialize;
 
+## Current status (2021-09-29):
+
+More or less working but `sdata` needs to be asserted before first `sclk`.
+See sim below... first bit should clock out as '1'.
+
+![waveforms](/images/Screenshot_2021-09-29_10-48-17.png)
