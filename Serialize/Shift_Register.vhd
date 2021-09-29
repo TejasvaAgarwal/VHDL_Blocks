@@ -36,6 +36,7 @@ architecture Shifting of Shift_Register is
 begin
 
   process (clock, reset) is
+
   begin  -- process
 
     if (reset = '1') then  -- always provide a reset for every signal
@@ -45,6 +46,7 @@ begin
       registered_data <= (others => '0');
       registered_dir  <= '0';
       busy            <= '0';
+
       sclk            <= '0';
       sdata           <= '0';
       del_start       <= '0';
