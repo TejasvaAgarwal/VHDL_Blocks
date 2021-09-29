@@ -9,77 +9,119 @@ use IEEE.numeric_std.all;
 entity Shift_Register is
 
   port (
-    clock : in std_logic; -- System clock.
-    reset : in std_logic; -- Synchronous active high reset.
-    busy  : out std_logic; -- Signal to indicate shifting.  
-    s_en  : in std_logic; -- Serial clock.
-    start : in std_logic; -- Enables shifting.
-    dir   : in std_logic; -- Specifies direction.
-    count : in std_logic_vector(4 downto 0); -- Specifies no. of bits.
-    data  : in std_logic_vector(31 downto 0); -- Parallel data.
-    sdata : out std_logic); -- Serial data.
+    clock    : in  std_logic;           -- System clock.
+    reset    : in  std_logic;           -- Synchronous active high reset.
+    busy     : out std_logic;           -- Signal to indicate shifting.  
+    s_en     : in  std_logic;           -- Serial clock.
+    s_en_180 : in  std_logic;
+    start    : in  std_logic;           -- Enables shifting.
+    dir      : in  std_logic;           -- Specifies direction.
+    count    : in  std_logic_vector(4 downto 0);   -- Specifies no. of bits.
+    data     : in  std_logic_vector(31 downto 0);  -- Parallel data.
+    sclk     : out std_logic;           -- serial clock
+    sdata    : out std_logic);          -- Serial data.
 
 end Shift_Register;
 
 architecture Shifting of Shift_Register is
 
-  signal count_int       : integer range 1 to 32; -- Integer value of count vector.
-  signal cycle           : integer range 1 to 32; -- Ascending or descending.                  
-  signal registered_data : std_logic_vector(31 downto 0); -- Temporary data vector.
-  signal registered_dir  : std_logic; -- To store the direction.
+  signal count_int       : integer range 1 to 32;  -- Integer value of count vector.
+  signal cycle           : integer range 1 to 32;  -- Ascending or descending.                  
+  signal registered_data : std_logic_vector(31 downto 0);  -- Temporary data vector.
+  signal registered_dir  : std_logic;   -- To store the direction.
+
+  signal del_start : std_logic;         -- start delayed one clock
+  signal s_busy    : std_logic;         -- internal busy flag
 
 begin
 
   process (clock, reset) is
-  begin -- process
-    if (reset = '1') then -- always provide a reset for every signal
-      if (count = "00000") then
-        count_int <= 32; -- Anomaly Case (count_in can't be 0 (logic error))
-      else
-        count_int <= to_integer(unsigned(count)); -- store the bit count
-      end if;
-      --count_int       <= 1;
+  begin  -- process
+
+    if (reset = '1') then  -- always provide a reset for every signal
+      -- reset all internal signals and outputs to a known state
+      count_int       <= 1;
+      cycle           <= 1;
       registered_data <= (others => '0');
+      registered_dir  <= '0';
       busy            <= '0';
-      registered_dir  <= dir; -- only changes at reset or dir
+      sclk            <= '0';
+      sdata           <= '0';
+      del_start       <= '0';
+      s_busy          <= '0';
 
-    elsif (rising_edge(clock)) then -- rising clock edge
-      -- latch the output
-      if (s_en = '1') then
-        sdata <= data(cycle - 1);
-      end if;
+    elsif (rising_edge(clock)) then     -- rising clock edge
 
-      -- initialization
+      del_start <= start;               -- delay start by one clock
+
+      -- initialization, capture all user inputs
+      -- (don't actually do anything yet)
       if (start = '1') then
-        registered_dir <= dir;
         if (count = "00000") then
-          count_int <= 32; -- Anomaly Case (count_in can't be 0 (logic error))
+          count_int <= 32;              -- 0 means 32
         else
-          count_int <= to_integer(unsigned(count)); -- store the bit count
+          count_int <= to_integer(unsigned(count));  -- store the bit count
         end if;
-        registered_data <= data; -- store the data
+        registered_dir  <= dir;         -- only changes at reset or dir
+        registered_data <= data;        -- store the data
+      end if;
+
+      -- one clock after start, we actually begin the serialization
+      if del_start = '1' then
         if (registered_dir = '0') then
-          cycle <= 1; -- count up if dir = 0
+          cycle <= 1;                   -- count up if dir = 0
         else
-          cycle <= count_int; -- count down if dir = 1
+          cycle <= count_int;           -- count down if dir = 1
+        end if;
+        s_busy <= '1';
+      end if;
+
+      -- we're running, and s_en is active so time to shift
+      if s_busy = '1' and s_en = '1' then
+
+        if registered_dir = '0' then    -- direction = INCREASING
+          if cycle < count_int then
+            cycle <= cycle + 1;         -- incrementing from 1 to count_int.
+          else
+            s_busy <= '0';
+          end if;
+        else                            -- direction = DECREASING
+          if cycle > 1 then
+            cycle <= cycle - 1;         -- decrementing from count_int to 1.
+          else
+            s_busy <= '0';
+          end if;
+        end if;
+
+      end if;
+
+      -- latch the output, only if running
+      -- <FIXME> this doesn't work for the first bit
+      if s_en = '1' then
+        if s_busy = '1' then
+          sdata <= data(cycle - 1);
+        else
+          sdata <= '0';
         end if;
       end if;
 
-      -- shifting
-      if (s_en = '1' and start = '0') then
-        busy <= '1';
-        if (registered_dir = '0' and (cycle < count_int)) then
-          cycle <= cycle + 1; -- incrementing from 0 to count_int.
-        elsif (registered_dir = '0' and (cycle = count_int)) then
-          busy <= '0';
+      busy <= s_busy;
+
+      -- update the serial clock if running
+      if s_busy = '1' then
+        if s_en = '1' then
+          sclk <= '0';
         end if;
-        if (registered_dir = '1' and (cycle > 1)) then
-          cycle <= cycle - 1; -- decrementing from count_int to 0.
-        elsif (registered_dir = '1' and (cycle = 1)) then
-          busy <= '0';
+
+        if s_en_180 = '1' then
+          sclk <= '1';
         end if;
       end if;
+
+
+
     end if;
+
   end process;
 
 end architecture;
