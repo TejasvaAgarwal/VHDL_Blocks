@@ -52,7 +52,8 @@ begin
     start   <= '0';
     reset   <= '1', '0' after clock_period;
     count   <= std_logic_vector( to_unsigned( 4, count'length));
-    data    <= "10011001010110010101100101010110";
+    data    <= "10101010101010101010101010101010";
+    --data    <= "10011001010110010101100101010110";
     --data    <= "10001001101010111100110111101111";
     --data    <= X"AAA00BAF";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
