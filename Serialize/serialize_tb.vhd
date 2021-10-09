@@ -52,7 +52,7 @@ begin
     start   <= '0';
     reset   <= '1', '0' after clock_period;
     count   <= std_logic_vector( to_unsigned( 4, count'length));
-    data    <= "10101010101010101010101010101010";
+    data    <= "10101010101010101010101010101011";
     --data    <= "10011001010110010101100101010110";
     --data    <= "10001001101010111100110111101111";
     --data    <= X"AAA00BAF";
@@ -69,7 +69,10 @@ begin
     wait for sclk_period * 14;
 
     dir <= '1';                         -- decreasing bit order
-    
+
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14 - clock_period/4;
+
     start <= '1', '0' after clock_period;
     wait for sclk_period * 14 - clock_period/4;
 

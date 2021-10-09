@@ -11,14 +11,14 @@ entity Shift_Register is
   port (
     clock    : in std_logic; -- System clock.
     reset    : in std_logic; -- Synchronous active high reset.
-    busy     : out std_logic; -- Signal to indicate shifting.  
-    s_en     : in std_logic; -- Serial clock.
-    s_en_180 : in std_logic;
+    s_en     : in std_logic; -- Serial enable.  
+    s_en_180 : in std_logic; -- Phase shifted.
     start    : in std_logic; -- Enables shifting.
     dir      : in std_logic; -- Specifies direction.
     count    : in std_logic_vector(4 downto 0); -- Specifies no. of bits.
     data     : in std_logic_vector(31 downto 0); -- Parallel data.
-    sclk     : out std_logic; -- serial clock
+    busy     : out std_logic; -- Signal to indicate serialization.
+    sclk     : out std_logic; -- Serial clock
     sdata    : out std_logic); -- Serial data.
 
 end Shift_Register;
@@ -36,8 +36,8 @@ architecture Shifting of Shift_Register is
 begin
 
   process (clock, reset) is
--- The problem right now is that the sdata is laging the behind the sclock
--- Possible solution: Delay start till s_en. 
+    -- The problem right now is that the sdata is laging the behind the sclock
+    -- Possible solution: Delay start till s_en. 
   begin -- process
 
     if (reset = '1') then -- always provide a reset for every signal
@@ -54,7 +54,6 @@ begin
       s_busy    <= '0';
 
     elsif (rising_edge(clock)) then -- rising clock edge
-
         del_start <= start; -- delay start by one clock.
       -- initialization, capture all user inputs
       -- (don't actually do anything yet) 
