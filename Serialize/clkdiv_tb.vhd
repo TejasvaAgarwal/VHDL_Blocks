@@ -13,7 +13,7 @@ architecture sim of clkdiv_tb is
   signal s_enable     : std_logic;
   signal s_enable_180 : std_logic;
   --signal sclk         : std_logic;
-
+  constant clock_period : time    := 10 ns;
 begin
   DUT : entity work.clkdiv
     port map(
@@ -24,8 +24,9 @@ begin
       s_enable_180 => s_enable_180);
       --sclk => sclk);
 
-  divider <= "00001010";
-  reset   <= '1', '0' after 20 ns;
+  divider <= "00001010", "00000101" after 500 ns;
+  reset   <= '1', '0' after 20 ns, '1' after 500 ns, '0' after 520 ns;
+ 
 
   process
   begin
