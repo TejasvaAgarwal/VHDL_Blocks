@@ -79,7 +79,6 @@ begin
 
       -- we're running, and s_en is active so time to shift
       if s_busy = '1' and s_en = '1' then
-
         if registered_dir = '0' then -- direction = INCREASING
           if cycle < count_int then
             cycle <= cycle + 1; -- incrementing from 1 to count_int.
@@ -93,7 +92,6 @@ begin
             s_busy <= '0';
           end if;
         end if;
-
       end if;
 
       -- latch the output, only if running
