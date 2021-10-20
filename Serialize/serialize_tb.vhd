@@ -16,8 +16,6 @@ architecture Behavioral of serialize_tb is
   signal dir     : std_logic;                      -- Shift direction.
   signal start   : std_logic;                      -- Start serialization.
   signal busy    : std_logic;                      -- High when busy.
-  --signal s_en     : std_logic;          -- Serial clock out.
-  --signal s_en_180 : std_logic;  -- Serial clock out, phase shifted 180 degrees.
   signal sdata   : std_logic;                      -- Serial data out.
   signal sclk    : std_logic;
 
@@ -51,13 +49,14 @@ begin
 
     start   <= '0';
     reset   <= '1', '0' after clock_period;
-    count   <= "00001";
-    --count   <= std_logic_vector(to_unsigned( 4, count'length));
-    data <= X"00000001";
+    --count   <= "00001";
+    count   <= std_logic_vector(to_unsigned( 4, count'length));
+    --data <= X"00000001";
     --data    <= "01101010101010101010101010101001";
     --data    <= "10011001010110010101100101010110";
     --data    <= "10001001101010111100110111101111";
-    --data    <= X"AAA00BAF";
+    --data    <= X"BAF00AAA";
+    data    <= X"0AAAAAAF";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
 
     dir     <= '0';                     -- increasing bit order
@@ -65,18 +64,18 @@ begin
     wait for clock_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 14 - clock_period/4;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 14 - clock_period/4;
 
-    dir <= '1';                         -- decreasing bit order
-
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    --dir <= '1';                         -- decreasing bit order
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 14 - clock_period/4;
+
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14 - clock_period/4;
 
     start <= '1', '0' after clock_period;
     wait for sclk_period * 14 - clock_period/4;

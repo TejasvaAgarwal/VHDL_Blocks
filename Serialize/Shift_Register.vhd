@@ -38,6 +38,7 @@ begin
   process (clock, reset) is
     -- The problem right now is that the sdata is laging the behind the sclock
     -- Possible solution: Delay start till s_en. 
+    -- Del_start = s_en.
   begin -- process
 
     if (reset = '1') then -- always provide a reset for every signal
