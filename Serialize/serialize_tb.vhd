@@ -49,14 +49,14 @@ begin
 
     start   <= '0';
     reset   <= '1', '0' after clock_period;
-    --count   <= "00001";
-    count   <= std_logic_vector(to_unsigned( 4, count'length));
+    count   <= "00100";
+    --count   <= std_logic_vector(to_unsigned( 4, count'length));
     --data <= X"00000001";
     --data    <= "01101010101010101010101010101001";
     --data    <= "10011001010110010101100101010110";
     --data    <= "10001001101010111100110111101111";
-    --data    <= X"BAF00AAA";
-    data    <= X"0AAAAAAF";
+    data    <= X"BAF00AAA";
+    --data    <= X"0AAAAAAF";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
 
     dir     <= '0';                     -- increasing bit order

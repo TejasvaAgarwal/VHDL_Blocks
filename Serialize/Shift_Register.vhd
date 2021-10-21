@@ -30,8 +30,9 @@ architecture Shifting of Shift_Register is
   signal registered_data : std_logic_vector(31 downto 0); -- Temporary data vector.
   signal registered_dir  : std_logic; -- To store the direction.
 
-  signal del_start : std_logic; -- start delayed one clock
-  signal s_busy    : std_logic; -- internal busy flag
+  signal temp_start : std_logic; -- To record advent of start.
+  signal del_start  : std_logic; -- Delayed till s_en.
+  signal s_busy     : std_logic; -- internal busy flag
 
 begin
 
@@ -48,38 +49,47 @@ begin
       registered_data <= (others => '0');
       registered_dir  <= '0';
       busy            <= '0';
-
-      sclk      <= '0';
-      sdata     <= '0';
-      del_start <= '0';
-      s_busy    <= '0';
+      sclk            <= '0';
+      sdata           <= '0';
+      del_start       <= '0';
+      temp_start      <= '0';
+      s_busy          <= '0';
 
     elsif (rising_edge(clock)) then -- rising clock edge
-        del_start <= start; -- delay start by one clock.
+      --del_start <= start; -- delay start by one clock.
       -- initialization, capture all user inputs
       -- (don't actually do anything yet) 
-      if (start = '1') then
-        if (count = "00000") then
+      if start = '1' then
+        if count = "00000" then
           count_int <= 32; -- 0 means 32
         else
           count_int <= to_integer(unsigned(count)); -- store the bit count
         end if;
         registered_dir  <= dir; -- only changes at reset or dir
         registered_data <= data; -- store the data
+        temp_start      <= '1'; -- To record advent of start.
+      end if;
+
+      -- Need to actually start serializing at after s_en 
+      -- regardless of position of input 'start'.
+      if (s_en = '1' and temp_start = '1') then
+        del_start  <= '1';
+        temp_start <= '0';
       end if;
 
       -- one clock after start, we actually begin the serialization
       if del_start = '1' then
-        if (registered_dir = '0') then
+        if registered_dir = '0' then
           cycle <= 1; -- count up if dir = 0
         else
           cycle <= count_int; -- count down if dir = 1
         end if;
-        s_busy <= '1';
+        s_busy    <= '1';
+        del_start <= '0';
       end if;
 
       -- we're running, and s_en is active so time to shift
-      if s_busy = '1' and s_en = '1' then
+      if (s_busy = '1' and s_en = '1') then
         if registered_dir = '0' then -- direction = INCREASING
           if cycle < count_int then
             cycle <= cycle + 1; -- incrementing from 1 to count_int.
