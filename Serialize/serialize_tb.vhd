@@ -23,7 +23,7 @@ architecture Behavioral of serialize_tb is
   constant clock_period : time    := 10 ns;
   signal stop_the_clock : boolean := false;
   -- serial clock divider for this simulation
-  constant clock_div    : integer := 10;
+  constant clock_div    : integer := 17;
 
   constant sclk_period : time := clock_period * clock_div;
 
@@ -49,7 +49,7 @@ begin
 
     start   <= '0';
     reset   <= '1', '0' after clock_period;
-    count   <= "00100";
+    count   <= "00110";
     --count   <= std_logic_vector(to_unsigned( 4, count'length));
     --data <= X"00000001";
     --data    <= "01101010101010101010101010101001";
@@ -59,35 +59,35 @@ begin
     --data    <= X"0AAAAAAF";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
 
-    dir     <= '0';                     -- increasing bit order
+    dir     <= '1';                     -- increasing bit order
 
     wait for clock_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    --dir <= '1';                         -- decreasing bit order
+    -- --dir <= '1';                         -- decreasing bit order
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14 - clock_period/4;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14 - clock_period/4;
 
-    start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    -- start <= '1', '0' after clock_period;
+    -- wait for sclk_period * 14;
 
     wait;
 
