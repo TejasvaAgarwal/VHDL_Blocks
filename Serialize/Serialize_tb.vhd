@@ -2,11 +2,11 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use ieee.numeric_std.all;
 
-entity serialize_tb is
+entity Serialize_tb is
 --  Port ( );
-end serialize_tb;
+end Serialize_tb;
 
-architecture Behavioral of serialize_tb is
+architecture Behavioral of Serialize_tb is
 
   signal clock   : std_logic;                      -- System clock.
   signal reset   : std_logic;                      -- Active high reset.
@@ -29,7 +29,7 @@ architecture Behavioral of serialize_tb is
 
 begin
 
-  DUT : entity work. serialize
+  DUT : entity work. Serialize
     port map(
       clock   => clock,
       reset   => reset,
@@ -49,7 +49,7 @@ begin
 
     start   <= '0';
     reset   <= '1', '0' after clock_period;
-    count   <= "00100";
+    count   <= "00101";
     --count   <= std_logic_vector(to_unsigned( 4, count'length));
     --data <= X"00000001";
     --data    <= "01101010101010101010101010101001";
@@ -59,35 +59,35 @@ begin
     data    <= X"0AAAAAAF";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
 
-    dir     <= '0';                     -- increasing bit order
+    dir     <= '1';                     -- increasing bit order
 
     wait for clock_period * 10;
 
     start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- --dir <= '1';                         -- decreasing bit order
+    dir <= '0';                         -- decreasing bit order
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14 - clock_period/4;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
-    -- start <= '1', '0' after clock_period;
-    -- wait for sclk_period * 14;
+    start <= '1', '0' after clock_period;
+    wait for sclk_period * 14;
 
     wait;
 
