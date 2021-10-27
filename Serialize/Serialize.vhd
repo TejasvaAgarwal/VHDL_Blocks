@@ -38,15 +38,12 @@ architecture Serialization of Serialize is
   signal clk_count_180 : integer range 0 to 255; -- Clock Count to count till the input clock reaches the divider.
   signal s_en          : std_logic; -- Enable signal with 1 HZ frequency.
   signal s_en_180      : std_logic; -- Phase shifted 180 degrees with s_enable.
-  signal temp          : std_logic; -- Temporary variable to store the serial enable value.
-  signal temp_180      : std_logic; -- Temporary variable to store the phase shifted.
+  signal temp_en       : std_logic; -- Temporary variable to store the serial enable value.
+  signal temp_en_180   : std_logic; -- Temporary variable to store the phase shifted.
 
 begin
 
   process (clock, reset) is
-    -- The problem right now is that the sdata is laging the behind the sclock
-    -- Possible solution: Delay start till s_en. 
-    -- Del_start = s_en.
   begin -- process
 
     if (reset = '1') then -- always provide a reset for every signal
@@ -62,16 +59,15 @@ begin
       temp_start      <= '0';
       s_busy          <= '0';
 
-      temp          <= '0';
+      temp_en       <= '0';
       s_en          <= '0';
-      temp_180      <= '0';
+      temp_en_180   <= '0';
       s_en_180      <= '0';
       clk_count     <= 0;
       clk_count_180 <= 0;
       int_divider   <= to_integer(unsigned(divider));
 
     elsif (rising_edge(clock)) then -- rising clock edge
-      --del_start <= start; -- delay start by one clock.
       -- initialization, capture all user inputs
       -- (don't actually do anything yet) 
       if start = '1' then
@@ -87,7 +83,7 @@ begin
 
       -- Need to actually start serializing at after s_en 
       -- regardless of position of input 'start'.
-      if (temp = '1' and temp_start = '1') then
+      if (temp_en = '1' and temp_start = '1') then
         del_start  <= '1';
         temp_start <= '0';
       end if;
@@ -121,7 +117,6 @@ begin
       end if;
 
       -- latch the output, only if running
-      -- <FIXME> this doesn't work for the first bit
       if s_en = '1' then
         if s_busy = '1' then
           sdata <= data(cycle - 1);
@@ -132,32 +127,33 @@ begin
 
       busy <= s_busy;
 
-      -- Serial Enable.
+      ------------------------------------------------------------------------------------      
+      -- Serial Enable. To Generate sclk.
       ------------------------------------------------------------------------------------
-      if (clk_count = int_divider - 2 and temp = '0') then -- Enable high condition.
-        temp      <= '1';
+      if (clk_count = int_divider - 2 and temp_en = '0') then -- Enable high condition.
+        temp_en      <= '1';
         clk_count <= 0;
-      elsif (temp = '1') then -- Enable low condition.
-        temp <= '0';
+      elsif (temp_en = '1') then -- Enable low condition.
+        temp_en <= '0';
       else
         clk_count <= clk_count + 1;
       end if;
 
-      if (temp_180 = '0') then
-        s_en <= temp;
+      if (temp_en_180 = '0') then
+        s_en <= temp_en;
       end if;
 
       -- Phase Shifted Serial Enable.
-      if (clk_count_180 = int_divider * 2 - 2 and temp_180 = '0') then -- Enable high condition.
-        temp_180      <= '1';
+      if (clk_count_180 = int_divider * 2 - 2 and temp_en_180 = '0') then -- Enable high condition.
+        temp_en_180    <= '1';
         clk_count_180 <= 0;
-      elsif (temp_180 = '1') then -- Enable low condition.
-        temp_180 <= '0';
+      elsif (temp_en_180 = '1') then -- Enable low condition.
+        temp_en_180 <= '0';
       else
         clk_count_180 <= clk_count_180 + 1;
       end if;
 
-      s_en_180 <= temp_180;
+      s_en_180 <= temp_en_180;
       ------------------------------------------------------------------------------------
       -- update the serial clock if running
       if s_busy = '1' then

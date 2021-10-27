@@ -20,8 +20,8 @@ view: Serialize_tb_view
 
 Serialize_tb.ghw: analyze.ready
 	$(GHDLE) Serialize_tb
-# NOTE:  stop time after 10us
-	$(GHDLR) Serialize_tb --stop-time=10us --wave=Serialize_tb.ghw
+# NOTE:  stop time after 20us
+	$(GHDLR) Serialize_tb --stop-time=20us --wave=Serialize_tb.ghw
 
 Serialize_tb_view: Serialize_tb.ghw Serialize_tb.tcl analyze.ready
 	$(GTKWAVE) Serialize_tb.ghw -S Serialize_tb.tcl

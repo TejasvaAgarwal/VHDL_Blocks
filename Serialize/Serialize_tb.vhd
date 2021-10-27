@@ -23,7 +23,7 @@ architecture Behavioral of Serialize_tb is
   constant clock_period : time    := 10 ns;
   signal stop_the_clock : boolean := false;
   -- serial clock divider for this simulation
-  constant clock_div    : integer := 17;
+  constant clock_div    : integer := 10;
 
   constant sclk_period : time := clock_period * clock_div;
 
@@ -49,45 +49,44 @@ begin
 
     start   <= '0';
     reset   <= '1', '0' after clock_period;
-    count   <= "00101";
+    count   <= "00011";
     --count   <= std_logic_vector(to_unsigned( 4, count'length));
     --data <= X"00000001";
     --data    <= "01101010101010101010101010101001";
     --data    <= "10011001010110010101100101010110";
     --data    <= "10001001101010111100110111101111";
-    --data    <= X"BAF00AAA";
-    data    <= X"0AAAAAAF";
+    data    <= X"BAF00AAA";
+    --data    <= X"8AAAAAA1";
     divider <= std_logic_vector(to_unsigned(clock_div, divider'length));
 
     dir     <= '1';                     -- increasing bit order
 
-    wait for clock_period * 10;
+    wait for clock_period * 9;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 12;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     dir <= '0';                         -- decreasing bit order
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
+    wait for sclk_period * 10;
 
     start <= '1', '0' after clock_period;
-    wait for sclk_period * 14;
 
     wait;
 
@@ -96,7 +95,7 @@ begin
   g_clk : process
   begin
     while not stop_the_clock loop
-      clock <= '0', '1' after clock_period / 2;
+      clock <= '1', '0' after clock_period / 2;
       wait for clock_period;
     end loop;
     wait;
